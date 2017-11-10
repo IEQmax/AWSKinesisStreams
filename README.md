@@ -77,10 +77,10 @@ Creates and returns AWSKinesisStreams.Record object that can be written into an 
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *data* | blob or any JSON-compatible type | Yes | The record data |
-| *partitionKey* | string | Yes | Determines which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-PartitionKey) |
-| *explicitHashKey* | string | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey) |
-| *prevSequenceNumber* | string | Optional | Guarantees strictly increasing sequence numbers, for puts from the same client and to the same partition key. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
+| *data* | Blob or any JSON-compatible type | Yes | The record data |
+| *partitionKey* | String | Yes | Determines which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-PartitionKey) |
+| *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey) |
+| *prevSequenceNumber* | String | Optional | Guarantees strictly increasing sequence numbers, for puts from the same client and to the same partition key. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
 
 ### Data Writing
 
@@ -98,10 +98,10 @@ Creates and returns AWSKinesisStreams.Producer object.
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *region* | string | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) |
-| *accessKeyId* | string | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *secretAccessKey* | string | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *streamName* | string | Yes | The name of Amazon Kinesis stream |
+| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) |
+| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
+| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
+| *streamName* | String | Yes | The name of Amazon Kinesis stream |
 
 ##### putRecord(*record[, callback]*)
 
@@ -154,7 +154,86 @@ Represents information from AWS Kinesis Streams about a written data record. It 
 
 ### Data Reading
 
+[AWSKinesisStreams.Consumer](#awskinesisstreamsconsumer-class) class allows the agent to read data records from a specific AWS Kinesis stream. One instance of this class reads data from one stream. The stream's name as well as the region and the user identificators are specified in the class constructor.
+
+AWS Kinesis Streams do not provide a functionality to read data records just from a stream, but rather from the shards which exist in the stream. To use AWSKinesisStreams.Consumer class you need to well understand the concept of shards, see [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference).
+
+AWSKinesisStreams.Consumer class has three methods.
+
+*getShards()* method allows your code to get the list of IDs of all shards of the stream, including the closed shards. Note, the closed shards may still contain the records your application may need to read.
+
+*getShardIterator()* method allows your code to specify a start position from which the reading should be started and obtain the corresponding shard iterator to initiate the reading process from the shard.
+
+*getRecords()* method allows your code to read a portion of data records using the specified shard iterator and returns the next shard iterator which can be used to read the next portion of data records by calling *getRecords()* method the next time. Data reading is always going in the direction from older records to the latest.
+
+Note, every shard iterator, returned by *getShardIterator()* or *getRecords()* method, expires five minutes after it is returned. Your application should call the next *getRecords()* method with the iterator before it expires, otherwise the call will fail and your code should obtain a new iterator using *getShardIterator()* method.
+
+If your application needs to read all records from the stream it should read them from all the shards of the stream. The library allows to obtain shard iterators for different shards of the same stream and process the reading from the shards in parallel. The list of shards is changed when shards are merged or splitted. The application may check the latest list of the shards by calling *getShards()* method periodically, but it should be enough to make this check only when *getRecords()* method returns `null` as *nextOptions* for any of the shards. Note, a shard ID never disappears from the list, only new IDs may appear.
+
+#### AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE Enum
+
+The shard iterator type. Determines how the shard iterator is used to start reading data records from the shard. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-ShardIteratorType). Has the following values:
+  - *AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_SEQUENCE_NUMBER* &mdash; Start reading from the position denoted by a specific record sequence number.
+  - *AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AFTER_SEQUENCE_NUMBER* &mdash; Start reading right after the position denoted by a specific record sequence number.
+  - *AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_TIMESTAMP* &mdash; Start reading from the position denoted by a specific timestamp.
+  - *AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.TRIM_HORIZON* &mdash; Start reading at the last untrimmed record in the shard in the system, which is the oldest data record in the shard.
+  - *AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.LATEST* &mdash; Start reading just after the most recent record in the shard, so that you always read the most recent data in the shard. 
+
 #### AWSKinesisStreams.Consumer Class
+
+Allows your code to read data records from a specific AWS Kinesis stream.
+
+##### Constructor: AWSKinesisStreams.Consumer(*region, accessKeyId, secretAccessKey, streamName[, isBlob]*)
+
+Creates and returns AWSKinesisStreams.Consumer object.
+
+| Parameter | Data Type | Required? | Description |
+| --- | --- | --- | --- |
+| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) |
+| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
+| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
+| *streamName* | String | Yes | The name of Amazon Kinesis stream |
+| *isBlob* | Boolean | Optional | ??? |
+
+##### getShards(*callback*)
+
+Get the list of IDs of all shards of the AWS Kinesis stream, including the closed shards.
+
+| Parameter | Data Type | Required? | Description |
+| --- | --- | --- | --- |
+| *callback* | Function | Yes | Executed once the operation is completed |
+
+The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+
+| Parameter | Data Type | Description |
+| --- | --- | --- |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
+| *shardIds* | Array of strings | The IDs of the stream's shards. The array is empty if the operation fails |
+
+##### getShardIterator(*shardId, type, typeOptions, callback*)
+
+Get the shard iterator which corresponds to the specified start position for the reading.
+
+| Parameter | Data Type | Required? | Description |
+| --- | --- | --- | --- |
+| *shardId* | String | Yes | The shard ID |
+| *type* | [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE](#aws_kinesis_streams_shard_iterator_type-enum) | Yes | The shard iterator type. Determines how the shard iterator is used to start reading data records from the shard. Some of the types require the corresponding *typeOptions* to be specified. |
+| *typeOptions* | Table | Yes | Additional options required for some of the shard iterator types specified by the *type* parameter. See below. |
+| *callback* | Function | Yes | Executed once the operation is completed |
+
+| *typeOptions* key | Data Type | Description |
+| --- | --- | --- |
+| *startingSequenceNumber* | String | The sequence number of the data record in the shard from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) or [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AFTER_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) |
+| *timestamp* | String | The timestamp of the data record from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_AT_TIMESTAMP](#aws_kinesis_streams_shard_iterator_type-enum). See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-Timestamp) for the behavior details |
+
+The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+
+| Parameter | Data Type | Description |
+| --- | --- | --- |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
+| *shardIterator* | String | The shard iterator, or `null` if the operation fails |
+
+##### getRecords(*options, callback*)
 
 #### Data Reading Example
 
