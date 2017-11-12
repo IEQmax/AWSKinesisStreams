@@ -45,35 +45,35 @@ class DataConsumer {
 
     // Periodically reads latest records from the specified shard
     function readRecords(shardId, options) {
-        _awsConsumer.getRecords(
-            options,
-            function (error, records, millisBehindLatest, nextOptions) {
-                if (error) {
-                    server.error("Data reading failed: " + error.details);
-                    readData(shardId);
-                } else {
-                    if (records.len() > 0) {
-                        server.log("Data read successfully:");
-                        foreach (record in records) {
-                            server.log(format("data: %s, timestamp: %d",
-                                http.jsonencode(record.data), record.timestamp));
+        imp.wakeup(READ_DATA_PERIOD_SEC, function () {
+            _awsConsumer.getRecords(
+                options,
+                function (error, records, millisBehindLatest, nextOptions) {
+                    if (error) {
+                        server.error("Data reading failed: " + error.details);
+                        readData(shardId);
+                    } else {
+                        if (records.len() > 0) {
+                            server.log("Data read successfully:");
+                            foreach (record in records) {
+                                server.log(format("data: %s, timestamp: %d",
+                                    http.jsonencode(record.data), record.timestamp));
+                            }
+                        } else {
+                            server.log("No new data records");
                         }
-                    } else {
-                        server.log("No new data records");
-                    }
-                    if (nextOptions) {
-                        _shardIterators[shardId] = nextOptions.shardIterator;
-                        imp.wakeup(READ_DATA_PERIOD_SEC, function () {
+                        if (nextOptions) {
+                            _shardIterators[shardId] = nextOptions.shardIterator;
                             readRecords(shardId, nextOptions);
-                        }.bindenv(this));
-                    } else {
-                        // the current shard has been closed,
-                        // shard iterators need to be reinitialized
-                        _shardIterators[shardId] = null;
-                        initShardIterators();
+                        } else {
+                            // the current shard has been closed,
+                            // shard iterators need to be reinitialized
+                            _shardIterators[shardId] = null;
+                            initShardIterators();
+                        }
                     }
-                }
-            }.bindenv(this));
+                }.bindenv(this));
+        }.bindenv(this));
     }
 
     // Starts data reading from the specified shard
