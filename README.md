@@ -21,7 +21,7 @@ Before using the library you need to have:
 - *accessKeyId* &mdash; **Access key ID** of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html).
 - *secretAccessKey* &mdash; **Secret access key** of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html).
 
-Also, you need to understand all the main Amazon Kinesis Streams concepts and terms, like stream, shard, record, etc. and know a name of Amazon Kinesis stream which is your application going to work with.
+Also, you need to understand all the main Amazon Kinesis Streams concepts and terms, like stream, shard, record, etc. and know a name of Amazon Kinesis stream which your application is going to work with.
 
 ## Library Usage
 
@@ -31,7 +31,7 @@ The library consists of two main and independent parts &mdash; [Data Writing](#d
 
 #### Callbacks
 
-All requests that are made to the Amazon Kinesis Streams library occur asynchronously. Every method that sends a request has an optional parameter which takes a callback function that will be called when the operation is completed, successfully or not. The callbacks’ parameters are listed in the corresponding method documentation, but every callback has at least one parameter, *error*. If *error* is `null`, the operation has been executed successfully. Otherwise, *error* is an instance of the [AWSKinesisStreams.Error](#awskinesisstreamserror-class) class and contains the details of the error.
+All requests that are made to the Amazon Kinesis Streams library occur asynchronously. Every method that sends a request has a parameter which takes a callback function that will be called when the operation is completed, successfully or not. The callback's parameters are listed in the corresponding method documentation, but every callback has at least one parameter, *error*. If *error* is `null`, the operation has been executed successfully. Otherwise, *error* is an instance of the [AWSKinesisStreams.Error](#awskinesisstreamserror-class) class and contains the details of the error.
 
 #### AWSKinesisStreams.Error Class
 
@@ -88,7 +88,7 @@ Creates and returns AWSKinesisStreams.Record object that can be written into an 
 | *data* | Blob or [JSON-compatible type](#json-compatible-type) | Yes | The record data |
 | *partitionKey* | String | Yes | Determines which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-PartitionKey) |
 | *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey) |
-| *prevSequenceNumber* | String | Optional | Guarantees strictly increasing sequence numbers, for puts from the same client and to the same partition key. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
+| *prevSequenceNumber* | String | Optional | See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
 
 ### Data Writing
 
@@ -142,7 +142,7 @@ The method returns nothing. The result of the operation may be obtained via the 
 | --- | --- | --- |
 | *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds or partially succeeds |
 | *failedRecordCount* | Integer | The number of unsuccessfully written records |
-| *putRecordResults* | Array of [AWSKinesisStreams.PutRecordResult](#awskinesisstreamsputrecordresult-class) | Array with the information from AWS Kinesis Streams about every processed data record, whether it is written successfully or not. Each record in the array directly correlates with a record in the *records* array using natural ordering, from the top to the bottom of the *records* and *putRecordResults*. If *error* is `null` then *putRecordResults* is empty, otherwise the *putRecordResults* array includes the same number of records as the *records* array. |
+| *putRecordResults* | Array of [AWSKinesisStreams.PutRecordResult](#awskinesisstreamsputrecordresult-class) | Array with the information from AWS Kinesis Streams about every processed data record, whether it is written successfully or not. Each record in the array directly correlates with a record in the *records* array using natural ordering, from the top to the bottom of the *records* and *putRecordResults*. If *error* is not `null` then *putRecordResults* is empty, otherwise the *putRecordResults* array includes the same number of records as the *records* array. |
 
 #### AWSKinesisStreams.PutRecordResult Class
 
@@ -158,7 +158,51 @@ Represents information from AWS Kinesis Streams about a written data record. It 
 
 #### Data Writing Example
 
-**TBD**
+```squirrel
+#require "AWSRequestV4.class.nut:1.0.2"
+#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+
+// Substitute with real values
+const AWS_KINESIS_REGION = "<YOUR_AWS_REGION>";
+const AWS_KINESIS_ACCESS_KEY_ID = "<YOUR_AWS_ACCESS_KEY_ID>";
+const AWS_KINESIS_SECRET_ACCESS_KEY = "<YOUR_AWS_SECRET_ACCESS_KEY>";
+
+const AWS_KINESIS_STREAM_NAME = "<YOUR_KINESIS_STREAM_NAME>";
+
+// Instantiation of AWS Kinesis Streams producer
+producer <- AWSKinesisStreams.Producer(
+    AWS_KINESIS_REGION, AWS_KINESIS_ACCESS_KEY_ID, AWS_KINESIS_SECRET_ACCESS_KEY, AWS_KINESIS_STREAM_NAME);
+
+// Writes single data record
+producer.putRecord(AWSKinesisStreams.Record("Hello!", "partitionKey"), function (error, putResult) {
+    if (error) {
+        server.error("Data writing failed: " + error.details);
+    } else {
+        // Record written successfully
+    }
+});
+
+// Writes multiple records with different data structures
+records <- [
+    AWSKinesisStreams.Record("test", "partitionKey1"),
+    AWSKinesisStreams.Record(12345, "partitionKey2"),
+    AWSKinesisStreams.Record({ "temperature" : 21, "humidity" : 60 }, "partitionKey3")
+];
+producer.putRecords(records, function (error, failedRecordCount, putResults) {
+    if (error) {
+        server.error("Data writing failed: " + error.details);
+    } else if (failedRecordCount > 0) {
+        server.log("Data writing partially failed:");
+        foreach (res in putResults) {
+            if (res.errorCode) {
+                server.log(format("%s: %s", res.errorCode, res.errorMessage));
+            }
+        }
+    } else {
+        // Records written successfully
+    }
+});
+```
 
 ### Data Reading
 
@@ -203,7 +247,7 @@ Creates and returns AWSKinesisStreams.Consumer object.
 | *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
 | *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
 | *streamName* | String | Yes | The name of Amazon Kinesis stream |
-| *isBlob* | Boolean | Optional | If `true`, the AWSKinesisStreams.Consumer object will consider every received data record as a Squirrel blob. If `true` or not specified, the AWSKinesisStreams.Consumer object will consider every received data record as a JSON data and parse it into appropriate [JSON-compatible type](#json-compatible-type) |
+| *isBlob* | Boolean | Optional | If `true`, the AWSKinesisStreams.Consumer object will consider every received data record as a Squirrel blob. If `false` or not specified, the AWSKinesisStreams.Consumer object will consider every received data record as a JSON data and parse it into appropriate [JSON-compatible type](#json-compatible-type) |
 
 ##### getShards(*callback*)
 
@@ -234,7 +278,7 @@ Get the Amazon Kinesis stream's shard iterator which corresponds to the specifie
 | *typeOptions* key | Data Type | Description |
 | --- | --- | --- |
 | *startingSequenceNumber* | String | The sequence number of the data record in the shard from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) or [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AFTER_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) |
-| *timestamp* | String | The timestamp of the data record from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_AT_TIMESTAMP](#aws_kinesis_streams_shard_iterator_type-enum). See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-Timestamp) for the behavior details |
+| *timestamp* | Integer | The timestamp of the data record from which to start reading. In number of seconds since Unix epoch (midnight, 1 Jan 1970). Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_TIMESTAMP](#aws_kinesis_streams_shard_iterator_type-enum). See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-Timestamp) for the behavior details |
 
 The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
 
@@ -273,7 +317,74 @@ The method returns nothing. The result of the operation may be obtained via the 
 
 #### Data Reading Example
 
-**TBD**
+```squirrel
+#require "AWSRequestV4.class.nut:1.0.2"
+#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+
+// Substitute with real values
+const AWS_KINESIS_REGION = "<YOUR_AWS_REGION>";
+const AWS_KINESIS_ACCESS_KEY_ID = "<YOUR_AWS_ACCESS_KEY_ID>";
+const AWS_KINESIS_SECRET_ACCESS_KEY = "<YOUR_AWS_SECRET_ACCESS_KEY>";
+
+const AWS_KINESIS_STREAM_NAME = "<YOUR_KINESIS_STREAM_NAME>";
+
+// Instantiation of AWS Kinesis Streams consumer
+consumer <- AWSKinesisStreams.Consumer(
+    AWS_KINESIS_REGION, AWS_KINESIS_ACCESS_KEY_ID, AWS_KINESIS_SECRET_ACCESS_KEY, AWS_KINESIS_STREAM_NAME);
+
+// Obtains the stream shards
+consumer.getShards(function (error, shardIds) {
+    if (error) {
+        server.error("getShards failed: " + error.details);
+    } else {
+        foreach (shardId in shardIds) {
+            getShardIterator(shardId);
+        }
+    }
+});
+
+// Obtains shard iterator for the specified shard and starts reading records
+function getShardIterator(shardId) {
+    consumer.getShardIterator(
+        shardId,
+        AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.TRIM_HORIZON,
+        null,
+        function (error, shardIterator) {
+            if (error) {
+                server.error("getShardIterator failed: " + error.details);
+            } else {
+                // shard iterator obtained successfully
+                readRecords({ "shardIterator" : shardIterator, "limit" : 10 });
+            }
+        });
+}
+
+// Recursively reads records from the specified shard
+function readRecords(options) {
+    consumer.getRecords(
+        options,
+        function (error, records, millisBehindLatest, nextOptions) {
+            if (error) {
+                server.error("Data reading failed: " + error.details);
+            } else {
+                if (records.len() == 0) {
+                    // No new records
+                } else {
+                    foreach (record in records) {
+                        // Process records individually
+                    }
+                }
+
+                if (nextOptions) {
+                    // Read next portion of records
+                    imp.wakeup(10.0, function () {
+                        readRecords(nextOptions);
+                    });
+                }
+            }
+        });
+}
+```
 
 ## Examples
 
