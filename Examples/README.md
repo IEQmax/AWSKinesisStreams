@@ -3,21 +3,21 @@
 This document describes the example applications provided with the [AWSKinesisStreams library](../README.md).
 
 The following example applications are provided:
-- **DataProducer**, it writes data records to AWS Kinesis Stream
-- **DataConsumer**, it reads data records from AWS Kinesis Stream
+- [DataProducer](#dataproducer), it writes data records to AWS Kinesis Stream
+- [DataConsumer](#dataconsumer), it reads data records from AWS Kinesis Stream
 
 To see data reading you need to run **DataConsumer** example in parallel with **DataProducer** example. We recommend that you:
 - run **DataProducer** on the agent of one IMP device
 - run **DataConsumer** on the agent of a second IMP device
 
-Each example is described below. If you wish to try one out, you'll find [setup instructions](#examples-setup-and-run) further down the page.
+Each example is described below. If you wish to try one out, you'll find [setup instructions](#setup-and-run) further down the page.
 
 ## DataProducer
 
 This example writes data records to the specified preconfigured AWS Kinesis Stream:
 
 - Data records are written every 10 seconds.
-- Data records are written using both putRecord and putRecords methods of AWSKinesisStreams.Producer.
+- Data records are written using *putRecord()* or *putRecords()* method of AWSKinesisStreams.Producer, switching the method after every 10 seconds.
 - Every data record contains:
   - `"value"` attribute - integer value, which starts at 1 and increases by 1 with every record written. It restarts from 1 everytime when the example is restarted.
   - `"origin"` attribute - contains name of method used to write the record (`"putRecord"` or `"putRecords"`).
@@ -28,22 +28,29 @@ This example writes data records to the specified preconfigured AWS Kinesis Stre
 
 This example reads new data records from all shards of the specified preconfigured AWS Kinesis Stream:
 
-- Data are read every 15 seconds.
+- Only new records, appeared in the Amazon Kinesis Streams after the example is started, are read.
+- The first read occurs 15 seconds after the example is started.
+- After that, data records are read every 15 seconds.
 - Every received data record is printed to the log.
 
 ![DataConsumer example](https://imgur.com/Yb6pGHi.png)
 
-## Examples Setup and Run
+## Setup and Run
 
-- Copy [DataProducer source code](./DataProducer.agent.nut) and paste it into Electric Imp IDE as IMP agent code of the device where you run **DataProducer** example. Note, before running the code you will need to set the configuration constants as described in the [examples setup](#examples-setup) below.
-- Copy [DataConsumer source code](./DataConsumer.agent.nut) and paste it into Electric Imp IDE as IMP agent code of the device where you run **DataConsumer** example. Note, before running the code you will need to set the configuration constants as described in the [examples setup](#examples-setup) below.
-- Perform the [examples setup](#examples-setup).
+- Copy [DataProducer source code](./DataProducer.agent.nut) and paste it into Electric Imp IDE as IMP agent code of the device where you run **DataProducer** example. Note, before running the code you will need to set the configuration constants as described later in [IMP Agent Constants Setup](#imp-agent-constants-setup).
+- Copy [DataConsumer source code](./DataConsumer.agent.nut) and paste it into Electric Imp IDE as IMP agent code of the device where you run **DataConsumer** example. Note, before running the code you will need to set the configuration constants as described later in [IMP Agent Constants Setup](#imp-agent-constants-setup).
+- Perform [AWS Kinesis Streams Setup](#aws-kinesis-streams-setup) described below.
+- Perform [IMP Agent Constants Setup](#imp-agent-constants-setup) described below.
 - Build and Run **DataProducer** IMP agent code.
 - Check from the logs in Electric Imp IDE that data writings are successful.
 - Build and Run **DataConsumer** IMP agent code.
 - Check from the logs in Electric Imp IDE that data readings are successful.
 
-### Examples Setup
+### AWS Kinesis Streams Setup
+
+The setup assumes you have AWS account and signed in AWS in your web browser.
+
+**IMPORTANT:** Before the setup check [Amazon Kinesis Streams Pricing](https://aws.amazon.com/kinesis/streams/pricing/).
 
 #### Create AWS Kinesis Stream
 
@@ -76,7 +83,7 @@ This example reads new data records from all shards of the specified preconfigur
 - Choose **Amazon Kinesis** as the **AWS service**.
 - Choose **All Actions** in the **Actions** field.
 ![IAM Policy](https://imgur.com/yX2L0jN.png)
-- Enter your **Stream ARN** in the **Amazon Resource Name (ARN)** field.
+- Enter your **Stream ARN**, which you retrieved and saved early, in the **Amazon Resource Name (ARN)** field.
 - Click **Add Statement**.
 ![IAM Policy Stream ARN](https://imgur.com/10rzsNJ.png)
 - Click **Next Step**.
@@ -100,10 +107,10 @@ This example reads new data records from all shards of the specified preconfigur
 - Click **Create user**.
 ![IAM create user](https://imgur.com/VUI0FLk.png)
 - Copy and save somewhere the **Access key ID**. It will be used as the value of *AWS_KINESIS_ACCESS_KEY_ID* constant in the example code for IMP agent.
-![IAM user access keys](https://imgur.com/4MzqRyJ.png)
 - Click **Show** under **Secret access key**. Copy and save somewhere the **Secret access key**. It will be used as the value of *AWS_KINESIS_SECRET_ACCESS_KEY* constant in the example code for IMP agent.
+![IAM user access keys](https://imgur.com/4MzqRyJ.png)
 
-#### IMP Agent Constants Setup
+### IMP Agent Constants Setup
 
 - For *AWS_KINESIS_REGION*, *AWS_KINESIS_ACCESS_KEY_ID* and *AWS_KINESIS_SECRET_ACCESS_KEY* constants in the example code for IMP agent: set the values you retrieved and saved in the previous steps. Set the same values for the both examples - **DataProducer** and **DataConsumer**.
 ![Configuration Constants](https://imgur.com/Er5JKmF.png)
