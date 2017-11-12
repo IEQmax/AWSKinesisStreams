@@ -58,6 +58,8 @@ class DataConsumer {
                             server.log(format("data: %s, timestamp: %d",
                                 http.jsonencode(record.data), record.timestamp));
                         }
+                    } else {
+                        server.log("No new data records");
                     }
                     if (nextOptions) {
                         _shardIterators[shardId] = nextOptions.shardIterator;
