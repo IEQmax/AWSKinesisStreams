@@ -73,11 +73,11 @@ Represents an Amazon Kinesis Streams record: a combination of data attributes. I
 
 | Property | Data Type | Description |
 | --- | --- | --- |
-| *data* | Blob or [JSON-compatible type](#json-compatible-type) | The record data |
-| *partitionKey* | String | Identifies which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-PartitionKey) |
-| *sequenceNumber* | String | The unique identifier of the record within its shard. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-SequenceNumber) |
+| *data* | Blob or [JSON-compatible type](#json-compatible-type) | The record data. |
+| *partitionKey* | String | Identifies which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-PartitionKey). |
+| *sequenceNumber* | String | The unique identifier of the record within its shard. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-SequenceNumber). |
 | *timestamp* | Integer | The approximate time that the record was inserted into the stream. In number of seconds since Unix epoch (midnight, 1 Jan 1970). |
-| *encryptionType* | [AWS_KINESIS_STREAMS_ENCRYPTION_TYPE](#aws_kinesis_streams_encryption_type-enum) | The encryption type used on the record |
+| *encryptionType* | [AWS_KINESIS_STREAMS_ENCRYPTION_TYPE](#aws_kinesis_streams_encryption_type-enum) | The encryption type used on the record. |
 
 ##### Constructor: AWSKinesisStreams.Record(*data, partitionKey[, explicitHashKey][, prevSequenceNumber]*)
 
@@ -85,10 +85,10 @@ Creates and returns AWSKinesisStreams.Record object that can be written into an 
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *data* | Blob or [JSON-compatible type](#json-compatible-type) | Yes | The record data |
-| *partitionKey* | String | Yes | Determines which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-PartitionKey) |
-| *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey) |
-| *prevSequenceNumber* | String | Optional | See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
+| *data* | Blob or [JSON-compatible type](#json-compatible-type) | Yes | The record data. |
+| *partitionKey* | String | Yes | Specifies which shard in the stream the data record is assigned to. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-PartitionKey). |
+| *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey). |
+| *prevSequenceNumber* | String | Optional | See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering). |
 
 ### Data Writing
 
@@ -106,10 +106,10 @@ Creates and returns AWSKinesisStreams.Producer object.
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) |
-| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *streamName* | String | Yes | The name of Amazon Kinesis stream |
+| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). |
+| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html). |
+| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html). |
+| *streamName* | String | Yes | The name of Amazon Kinesis stream. |
 
 ##### putRecord(*record[, callback]*)
 
@@ -117,15 +117,15 @@ Writes a single data record into the Amazon Kinesis stream. See the correspondin
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *record* | [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | Yes | The record to be written |
-| *callback* | Function | Optional | Executed once the operation is completed |
+| *record* | [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | Yes | The record to be written. |
+| *callback* | Function | Optional | Executed once the operation is completed. |
 
-The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+The method returns nothing. The result of the operation may be obtained via the *callback* function, which has the following parameters:
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
-| *putRecordResult* | [AWSKinesisStreams.PutRecordResult](#awskinesisstreamsputrecordresult-class) | The information from AWS Kinesis Streams about the written data record, or `null` if the operation fails |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds. |
+| *putRecordResult* | [AWSKinesisStreams.PutRecordResult](#awskinesisstreamsputrecordresult-class) | The information from AWS Kinesis Streams about the written data record, or `null` if the operation fails. |
 
 ##### putRecords(*records[, callback]*)
 
@@ -133,15 +133,15 @@ Writes multiple data records into the Amazon Kinesis stream in a single request.
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *records* | Array of [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | Yes | The records to be written |
-| *callback* | Function | Optional | Executed once the operation is completed |
+| *records* | Array of [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | Yes | The records to be written. |
+| *callback* | Function | Optional | Executed once the operation is completed. |
 
-The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+The method returns nothing. The result of the operation may be obtained via the *callback* function, which has the following parameters:
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds or partially succeeds |
-| *failedRecordCount* | Integer | The number of unsuccessfully written records |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds or partially succeeds. |
+| *failedRecordCount* | Integer | The number of unsuccessfully written records. |
 | *putRecordResults* | Array of [AWSKinesisStreams.PutRecordResult](#awskinesisstreamsputrecordresult-class) | Array with the information from AWS Kinesis Streams about every processed data record, whether it is written successfully or not. Each record in the array directly correlates with a record in the *records* array using natural ordering, from the top to the bottom of the *records* and *putRecordResults*. If *error* is not `null` then *putRecordResults* is empty, otherwise the *putRecordResults* array includes the same number of records as the *records* array. |
 
 #### AWSKinesisStreams.PutRecordResult Class
@@ -150,11 +150,11 @@ Represents information from AWS Kinesis Streams about a written data record. It 
 
 | Property | Data Type | Description |
 | --- | --- | --- |
-| *errorCode* | String | The error code for the data record, or `null` if the record is written successfully. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecordsResultEntry.html#Streams-Type-PutRecordsResultEntry-ErrorCode) |
-| *errorMessage* | String | The error message for the data record, or `null` if the record is written successfully. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecordsResultEntry.html#Streams-Type-PutRecordsResultEntry-ErrorMessage) |
-| *shardId* | String | The ID of the shard where the data record has been written, or `null` if the record writing fails |
-| *sequenceNumber* | String | The unique identifier of the record within its shard, or `null` if the record writing fails |
-| *encryptionType* | [AWS_KINESIS_STREAMS_ENCRYPTION_TYPE](#aws_kinesis_streams_encryption_type-enum) | The encryption type used on the record, or `null` if the record writing fails |
+| *errorCode* | String | The error code for the data record, or `null` if the record is written successfully. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecordsResultEntry.html#Streams-Type-PutRecordsResultEntry-ErrorCode). |
+| *errorMessage* | String | The error message for the data record, or `null` if the record is written successfully. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecordsResultEntry.html#Streams-Type-PutRecordsResultEntry-ErrorMessage). |
+| *shardId* | String | The ID of the shard where the data record has been written, or `null` if the record writing fails. |
+| *sequenceNumber* | String | The unique identifier of the record within its shard, or `null` if the record writing fails. |
+| *encryptionType* | [AWS_KINESIS_STREAMS_ENCRYPTION_TYPE](#aws_kinesis_streams_encryption_type-enum) | The encryption type used on the record, or `null` if the record writing fails. |
 
 #### Data Writing Example
 
@@ -243,11 +243,11 @@ Creates and returns AWSKinesisStreams.Consumer object.
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) |
-| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html) |
-| *streamName* | String | Yes | The name of Amazon Kinesis stream |
-| *isBlob* | Boolean | Optional | If `true`, the AWSKinesisStreams.Consumer object will consider every received data record as a Squirrel blob. If `false` or not specified, the AWSKinesisStreams.Consumer object will consider every received data record as a JSON data and parse it into appropriate [JSON-compatible type](#json-compatible-type) |
+| *region* | String | Yes | The Region code of Amazon EC2. See [Amazon EC2 documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). |
+| *accessKeyId* | String | Yes | Access key ID of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html). |
+| *secretAccessKey* | String | Yes | Secret access key of an AWS IAM user. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/streams/latest/dev/learning-kinesis-module-one-iam.html). |
+| *streamName* | String | Yes | The name of Amazon Kinesis stream. |
+| *isBlob* | Boolean | Optional | If `true`, the AWSKinesisStreams.Consumer object will consider every received data record as a Squirrel blob. If `false` or not specified, the AWSKinesisStreams.Consumer object will consider every received data record as a JSON data and parse it into appropriate [JSON-compatible type](#json-compatible-type). |
 
 ##### getShards(*callback*)
 
@@ -255,14 +255,14 @@ Get the list of IDs of all shards of the Amazon Kinesis stream, including the cl
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *callback* | Function | Yes | Executed once the operation is completed |
+| *callback* | Function | Yes | Executed once the operation is completed. |
 
-The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+The method returns nothing. The result of the operation may be obtained via the *callback* function, which has the following parameters:
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
-| *shardIds* | Array of strings | The IDs of the stream's shards. The array is empty if the operation fails |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds. |
+| *shardIds* | Array of strings | The IDs of the stream's shards. The array is empty if the operation fails. |
 
 ##### getShardIterator(*shardId, type, typeOptions, callback*)
 
@@ -270,22 +270,22 @@ Get the Amazon Kinesis stream's shard iterator which corresponds to the specifie
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *shardId* | String | Yes | The shard ID |
+| *shardId* | String | Yes | The shard ID. |
 | *type* | [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE](#aws_kinesis_streams_shard_iterator_type-enum) | Yes | The shard iterator type. Determines how the shard iterator is used to start reading data records from the shard. Some of the types require the corresponding *typeOptions* to be specified. |
-| *typeOptions* | Table | Yes | Additional options required for some of the shard iterator types specified by the *type* parameter. Pass `null` if the additional options are not required for the specified iterator type. Key-value table, see below |
-| *callback* | Function | Yes | Executed once the operation is completed |
+| *typeOptions* | Table | Yes | Additional options required for some of the shard iterator types specified by the *type* parameter. Pass `null` if the additional options are not required for the specified iterator type. Key-value table, see below. |
+| *callback* | Function | Yes | Executed once the operation is completed. |
 
 | *typeOptions* key | Data Type | Description |
 | --- | --- | --- |
-| *startingSequenceNumber* | String | The sequence number of the data record in the shard from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) or [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AFTER_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) |
-| *timestamp* | Integer | The timestamp of the data record from which to start reading. In number of seconds since Unix epoch (midnight, 1 Jan 1970). Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_TIMESTAMP](#aws_kinesis_streams_shard_iterator_type-enum). See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-Timestamp) for the behavior details |
+| *startingSequenceNumber* | String | The sequence number of the data record in the shard from which to start reading. Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum) or [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AFTER_SEQUENCE_NUMBER](#aws_kinesis_streams_shard_iterator_type-enum). |
+| *timestamp* | Integer | The timestamp of the data record from which to start reading. In number of seconds since Unix epoch (midnight, 1 Jan 1970). Must be specified if the *type* parameter is [AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.AT_TIMESTAMP](#aws_kinesis_streams_shard_iterator_type-enum). See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html#Streams-GetShardIterator-request-Timestamp) for the behavior details. |
 
-The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+The method returns nothing. The result of the operation may be obtained via the *callback* function, which has the following parameters:
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
-| *shardIterator* | String | The shard iterator, or `null` if the operation fails |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds. |
+| *shardIterator* | String | The shard iterator, or `null` if the operation fails. |
 
 ##### getRecords(*options, callback*)
 
@@ -293,27 +293,27 @@ Reads data records from the Amazon Kinesis stream's shard using the specified sh
 
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *options* | Table | Yes | Options for the operation. Key-value table, see below |
-| *callback* | Function | Yes | Executed once the operation is completed |
+| *options* | Table | Yes | Options for the operation. Key-value table, see below. |
+| *callback* | Function | Yes | Executed once the operation is completed. |
 
 | *options* key | Data Type | Required? | Description |
 | --- | --- | --- | --- |
-| *shardIterator* | String | Yes | The shard iterator that specifies the position in the shard from which the reading should be started |
-| *limit* | Integer | Optional | The maximum number of data records to read. If not specified, the number of returned records is Amazon Kinesis Streams specific. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html#Streams-GetRecords-request-Limit) |
+| *shardIterator* | String | Yes | The shard iterator that specifies the position in the shard from which the reading should be started. |
+| *limit* | Integer | Optional | The maximum number of data records to read. If not specified, the number of returned records is Amazon Kinesis Streams specific. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html#Streams-GetRecords-request-Limit). |
 
-The method returns nothing. The result of the operation may be obtained via the callback function, which has the following parameters:
+The method returns nothing. The result of the operation may be obtained via the *callback* function, which has the following parameters:
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds |
-| *records* | Array of [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | The data records retrieved from the shard. The array is empty if the operation fails or there are no new records in the shard for the specified shard iterator |
-| *millisBehindLatest* | Integer | The number of milliseconds the response is from the tip of the stream. Zero if there are no new records in the shard for the specified shard iterator. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html#Streams-GetRecords-response-MillisBehindLatest) |
-| *nextOptions* | Table | Options which can be used as the *options* parameter in the next *getRecords()* call. Key-value table, identical to the *options* table, see below. *nextOptions* is `null` if the operation fails or the shard has been closed and the specified shard iterator has reached the last record in the shard and will not return any more data |
+| *error* | [AWSKinesisStreams.Error](#awskinesisstreamserror-class) | Error details, or `null` if the operation succeeds. |
+| *records* | Array of [AWSKinesisStreams.Record](#awskinesisstreamsrecord-class) | The data records retrieved from the shard. The array is empty if the operation fails or there are no new records in the shard for the specified shard iterator. |
+| *millisBehindLatest* | Integer | The number of milliseconds the response is from the tip of the stream. Zero if there are no new records in the shard for the specified shard iterator. See [Amazon Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html#Streams-GetRecords-response-MillisBehindLatest). |
+| *nextOptions* | Table | Options which can be used as the *options* parameter in the next *getRecords()* call. Key-value table, identical to the *options* table, see below. *nextOptions* is `null` if the operation fails or the shard has been closed and the specified shard iterator has reached the last record in the shard and will not return any more data. |
 
 | *nextOptions* key | Data Type | Description |
 | --- | --- | --- |
-| *shardIterator* | String | The new shard iterator returned by Amazon Kinesis Streams. Can be used as the shard iterator in the next *getRecords()* call |
-| *limit* | Integer | The maximum number of data records to read. The same value as in the *options* table. Is missed if was missed in the *options* table |
+| *shardIterator* | String | The new shard iterator returned by Amazon Kinesis Streams. Can be used as the shard iterator in the next *getRecords()* call. |
+| *limit* | Integer | The maximum number of data records to read. The same value as in the *options* table. Is missed if was missed in the *options* table. |
 
 #### Data Reading Example
 
