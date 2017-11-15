@@ -4,8 +4,8 @@ This library lets your agent code to work with [Amazon Kinesis Streams](https://
 
 This version of the library supports the following functionality:
 
-- writing data records into an Amazon Kinesis stream
-- getting data records from an Amazon Kinesis stream's shard
+- writing data records into an Amazon Kinesis stream,
+- getting data records from an Amazon Kinesis stream's shard.
 
 AWSKinesisStreams library utilizes [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) library. **To add AWSKinesisStreams library to your project, add the following lines to the top of your agent code:**
 ```squirrel
