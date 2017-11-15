@@ -3,12 +3,12 @@
 This document describes the example applications provided with the [AWSKinesisStreams library](../README.md).
 
 The following example applications are provided:
-- [DataProducer](#dataproducer), it writes data records to AWS Kinesis Stream
-- [DataConsumer](#dataconsumer), it reads data records from AWS Kinesis Stream
+- [DataProducer](#dataproducer), it writes data records to AWS Kinesis Stream,
+- [DataConsumer](#dataconsumer), it reads data records from AWS Kinesis Stream.
 
 To see data reading you need to run **DataConsumer** example in parallel with **DataProducer** example. We recommend that you:
-- run **DataProducer** on the agent of one IMP device
-- run **DataConsumer** on the agent of a second IMP device
+- run **DataProducer** on the agent of one IMP device,
+- run **DataConsumer** on the agent of a second IMP device.
 
 Each example is described below. If you wish to try one out, you'll find [setup instructions](#setup-and-run) further down the page.
 
