@@ -58,59 +58,59 @@ The setup assumes you have AWS account and signed in AWS in your web browser.
 - Click **Go to the Streams console**.
 ![AWS Console](../png/CreateStream1.png?raw=true)
 - Click **Create Kinesis stream**.
-![AWS Streams](https://imgur.com/0qDSeoX.png)
+![AWS Streams](../png/CreateStream2.png?raw=true)
 - Enter `testStream` into **Kinesis stream name** field.
 - Enter `1` into **Number of shards** field.
 - Click **Create Kinesis stream**.
-![Create Stream](https://imgur.com/9BzfifO.png)
+![Create Stream](../png/CreateStream3.png?raw=true)
 - You will be redirected to the Kinesis streams list page.
 - Wait until the status of your Stream is changed to **ACTIVE**.
 - Click to your Stream name.
-![Stream list](https://imgur.com/89ggWDP.png)
+![Stream list](../png/CreateStream4.png?raw=true)
 - Copy and save somewhere **Stream ARN** of your Stream.
-![Stream details](https://imgur.com/LvNgM1X.png)
+![Stream details](../png/CreateStream5.png?raw=true)
 - The ARN format is `arn:aws:kinesis:region:account:stream/name`. Copy and save somewhere the region, e.g. `us-east-2`. It will be used as the value of *AWS_KINESIS_REGION* constant in the example code for IMP agent.
 
 #### Create AWS IAM Policy and User
 
 - Open the [AWS IAM console](https://console.aws.amazon.com/iam) in your web browser.
 - Click **Policies** in the left menu.
-![AWS IAM](https://imgur.com/z8F0Krl.png)
+![AWS IAM](../png/CreatePolicy1.png?raw=true)
 - Click **Create policy**.
-![IAM new policy](https://imgur.com/TYkKvGD.png)
+![IAM new policy](../png/CreatePolicy2.png?raw=true)
 - Click **Select** next to **Policy Generator**.
-![IAM Policy generator](https://imgur.com/DiJ6O9Z.png)
+![IAM Policy generator](../png/CreatePolicy3.png?raw=true)
 - Choose **Amazon Kinesis** as the **AWS service**.
 - Choose **All Actions** in the **Actions** field.
-![IAM Policy](https://imgur.com/yX2L0jN.png)
+![IAM Policy](../png/CreatePolicy4.png?raw=true)
 - Enter your **Stream ARN**, which you retrieved and saved early, in the **Amazon Resource Name (ARN)** field.
 - Click **Add Statement**.
-![IAM Policy Stream ARN](https://imgur.com/10rzsNJ.png)
+![IAM Policy Stream ARN](../png/CreatePolicy5.png?raw=true)
 - Click **Next Step**.
-![IAM Policy set permissions](https://imgur.com/7tAuK8L.png)
+![IAM Policy set permissions](../png/CreatePolicy6.png?raw=true)
 - Change **Policy Name** to `testStreamPolicy`.
 - Click **Create Policy**.  
-![IAM Create Policy](https://imgur.com/PTj2fIQ.png)
+![IAM Create Policy](../png/CreatePolicy7.png?raw=true)
 - Click **Users** in the left menu.
 - Click **Add user**.
-![IAM add user](https://imgur.com/84fMiQw.png)
+![IAM add user](../png/CreateUser1.png?raw=true)
 - Enter `testStreamUser` in the **User name** field.
 - For **Access type** choose **Programmatic access**.
 - Click **Next: Permissions**.
-![IAM user details](https://imgur.com/S3GJMRd.png)
+![IAM user details](../png/CreateUser2.png?raw=true)
 - Click **Attach existing policies directly**.
-![IAM user policy](https://imgur.com/WCHjnrV.png)
+![IAM user policy](../png/CreateUser3.png?raw=true)
 - In the **Search** field enter `testStreamPolicy`.
 - Select the box to the left of your policy name.
 - Click **Next: Review**.
-![IAM set policy](https://imgur.com/ZdHV3US.png)
+![IAM set policy](../png/CreateUser4.png?raw=true)
 - Click **Create user**.
-![IAM create user](https://imgur.com/VUI0FLk.png)
+![IAM create user](../png/CreateUser5.png?raw=true)
 - Copy and save somewhere the **Access key ID**. It will be used as the value of *AWS_KINESIS_ACCESS_KEY_ID* constant in the example code for IMP agent.
 - Click **Show** under **Secret access key**. Copy and save somewhere the **Secret access key**. It will be used as the value of *AWS_KINESIS_SECRET_ACCESS_KEY* constant in the example code for IMP agent.
-![IAM user access keys](https://imgur.com/4MzqRyJ.png)
+![IAM user access keys](../png/CreateUser6.png?raw=true)
 
 ### IMP Agent Constants Setup
 
 - For *AWS_KINESIS_REGION*, *AWS_KINESIS_ACCESS_KEY_ID* and *AWS_KINESIS_SECRET_ACCESS_KEY* constants in the example code for IMP agent: set the values you retrieved and saved in the previous steps. Set the same values for the both examples - **DataProducer** and **DataConsumer**.
-![Configuration Constants](https://imgur.com/Er5JKmF.png)
+![Configuration Constants](../png/ConstSetup.png?raw=true)
