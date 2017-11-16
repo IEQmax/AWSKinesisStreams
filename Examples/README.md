@@ -22,7 +22,7 @@ This example writes data records to the specified preconfigured AWS Kinesis Stre
   - `"value"` attribute - integer value, which starts at 1 and increases by 1 with every record written. It restarts from 1 everytime when the example is restarted.
   - `"origin"` attribute - contains name of method used to write the record (`"putRecord"` or `"putRecords"`).
 
-![DataProducer example](https://imgur.com/A7DHifN.png)
+![DataProducer example](../png/ProducerExample.png?raw=true)
 
 ## DataConsumer
 
@@ -33,7 +33,7 @@ This example reads new data records from all shards of the specified preconfigur
 - After that, data records are read every 15 seconds.
 - Every received data record is printed to the log.
 
-![DataConsumer example](https://imgur.com/Yb6pGHi.png)
+![DataConsumer example](../png/ConsumerExample.png?raw=true)
 
 ## Setup and Run
 
@@ -56,7 +56,7 @@ The setup assumes you have AWS account and signed in AWS in your web browser.
 
 - Open the [Amazon Kinesis console](https://console.aws.amazon.com/kinesis) in your web browser.
 - Click **Go to the Streams console**.
-![AWS Console](https://imgur.com/mp4wdlg.png)
+![AWS Console](../png/CreateStream1.png?raw=true)
 - Click **Create Kinesis stream**.
 ![AWS Streams](https://imgur.com/0qDSeoX.png)
 - Enter `testStream` into **Kinesis stream name** field.
