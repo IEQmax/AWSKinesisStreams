@@ -50,7 +50,7 @@ This class represents an error returned by the library. As such it will be gener
 
 ## AWSKinesisStreams Class ##
 
-This is the parent class for AWSKinesisStreams.Producer and AWSKinesisStreams.Consumer. You will not work with this class but with instances of its child classes, all of which respond to the following method:
+This is the parent class for [AWSKinesisStreams.Producer](#awskinesisstreamsproducer-class-usage) and [AWSKinesisStreams.Consumer](#awskinesisstreamsconsumer-class-usage). You will not work with this class but with instances of its child classes, all of which respond to the following method:
 
 ### setDebug(*value*) ###
 
@@ -75,7 +75,7 @@ This method creates and returns an AWSKinesisStreams.Record object that can be w
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
 | *data* | Blob or [JSON-compatible type](#json-compatible-type) | Yes | The record data |
-| *partitionKey* | String | Identifies which shard in the stream the data record is assigned to (see the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-PartitionKey)) |
+| *partitionKey* | String | Yes | Identifies which shard in the stream the data record is assigned to (see the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-PartitionKey)) |
 | *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash (see the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey)) |
 | *prevSequenceNumber* | String | Optional | See the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
 
@@ -92,7 +92,7 @@ For more information, please see the [Kinesis Streams documentation](http://docs
 
 ## AWSKinesisStreams.Producer Class Usage ##
 
-The [AWSKinesisStreams.Producer](#awskinesisstreamsproducer-class) class allows the agent to write data records to a specific AWS Kinesis stream. One instance of this class writes data to one stream. The stream’s name as well as the region and the user identification are specified in the class constructor.
+This class allows the agent to write data records to a specific AWS Kinesis stream. One instance of this class writes data to one stream. The stream’s name as well as the region and the user identification are specified in the class constructor.
 
 ### Constructor: AWSKinesisStreams.Producer(*region, accessKeyId, secretAccessKey, streamName*) ###
 
