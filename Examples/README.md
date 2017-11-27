@@ -16,7 +16,7 @@ Each example is described below. If you wish to try one out, you will find [setu
 This example writes data records to the specified preconfigured AWS Kinesis Stream:.
 
 - Data records are written every ten seconds.
-- Data records are written using the *putRecord()*and *putRecords()* methods of AWSKinesisStreams.Producer, switching the method every ten seconds.
+- Data records are written using the *putRecord()* and *putRecords()* methods of AWSKinesisStreams.Producer, switching the method every ten seconds.
 - Every data record contains:
     - A `"value"` attribute. This is an integer value which starts at 1 and increases by 1 with every record written. It restarts from 1 every time the example is restarted.
     - An `"origin"` attribute. This contains the name of the method used to write the record, ie. `"putRecord"` or `"putRecords"`.
@@ -40,7 +40,7 @@ This example reads new data records from all shards of the specified preconfigur
 1. Copy the [*DataProducer* source code](./DataProducer.agent.nut) and paste it into the IDE as agent code for imp A.
 1. Copy the [*DataConsumer* source code](./DataConsumer.agent.nut) and paste it into the IDE as agent code for imp B.
 1. Perform [AWS Kinesis Streams Setup](#aws-kinesis-streams-setup) as described below.
-1. Perform [Agent Constants Setup](#imp-agent-constants-setup) as described below.
+1. Perform [Agent Constants Setup](#agent-constants-setup) as described below.
 1. Build and Run *DataProducer*.
 1. Check from the logs in the IDE that data is being written successfully.
 1. Build and Run *DataConsumer*.
