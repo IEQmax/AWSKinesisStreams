@@ -743,7 +743,7 @@ class AWSKinesisStreams.Record {
         this.partitionKey = partitionKey;
         _explicitHashKey = explicitHashKey;
         _prevSequenceNumber = prevSequenceNumber;
-        _encoder = encoder == null ? http.jsonencode.bindenv(jsonencode) : encoder;
+        _encoder = encoder == null ? http.jsonencode.bindenv(http) : encoder;
     }
 
     // -------------------- PRIVATE METHODS -------------------- //
