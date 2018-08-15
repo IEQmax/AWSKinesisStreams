@@ -717,6 +717,7 @@ class AWSKinesisStreams.Record {
     _error = null;
     _explicitHashKey = null;
     _prevSequenceNumber = null;
+    _encoder = null;
 
     // Creates and returns AWSKinesisStreams.Record object that can be written into an
     // Amazon Kinesis stream using AWSKinesisStreams.Producer methods.
@@ -737,11 +738,12 @@ class AWSKinesisStreams.Record {
     //                               written into the Amazon Kinesis stream using
     //                               AWSKinesisStreams.Producer putRecord/putRecords
     //                               methods.
-    constructor(data, partitionKey, explicitHashKey = null, prevSequenceNumber = null) {
+    constructor(data, partitionKey, explicitHashKey = null, prevSequenceNumber = null, encoder = null) {
         this.data = data;
         this.partitionKey = partitionKey;
         _explicitHashKey = explicitHashKey;
         _prevSequenceNumber = prevSequenceNumber;
+        _encoder = encoder == null ? http.jsonencode.bindenv(jsonencode) : encoder;
     }
 
     // -------------------- PRIVATE METHODS -------------------- //
@@ -750,7 +752,7 @@ class AWSKinesisStreams.Record {
         _error = AWSKinesisStreams._utils._validateNonEmpty(partitionKey, "partitionKey");
         if (!_error) {
             local result = {
-                "Data" : http.base64encode(typeof data == "blob" ? data.tostring() : http.jsonencode(data)),
+                "Data" : http.base64encode(typeof data == "blob" ? data.tostring() : _encoder(data)),
                 "PartitionKey" : partitionKey,
             };
             if (_explicitHashKey) {
