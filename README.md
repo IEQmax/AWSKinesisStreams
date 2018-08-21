@@ -13,7 +13,7 @@ The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/ele
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 ```
 
 ## Library Usage ##
@@ -269,7 +269,7 @@ A type of Squirrel data which can be encoded/decoded into/from JSON, eg. table, 
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 #require "JSONEncoder.class.nut:2.0.0"
 
 //This class can be used to hold numbers larger than Squirrel can natively support (i.e. anything larger than 32-bit)
@@ -336,7 +336,7 @@ producer.putRecords(records, function (error, failedRecordCount, putResults) {
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 
 // Substitute with real values
 const AWS_KINESIS_REGION = "<YOUR_AWS_REGION>";

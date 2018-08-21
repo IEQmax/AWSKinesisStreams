@@ -53,7 +53,7 @@ const _AWS_KINESIS_STREAMS_SERVICE = "kinesis";
 const _AWS_KINESIS_STREAMS_TARGET_PREFIX = "Kinesis_20131202";
 
 class AWSKinesisStreams {
-    static VERSION = "1.0.0";
+    static VERSION = "1.1.0";
 
     // Enables/disables the library debug output (including errors logging).
     // Disabled by default.
