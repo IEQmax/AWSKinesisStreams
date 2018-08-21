@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 
 // AWSKinesisStreams.Consumer library sample. 
 // Periodically reads new data records from all shards of the specified preconfigured
