@@ -734,6 +734,9 @@ class AWSKinesisStreams.Record {
     //   prevSequenceNumber :        See http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering
     //     string (optional)
     //
+    //   encoder :                   a custom JSON encoder function for encoding the provided data (e.g. [JSONEncoder.encode](https://github.com/electricimp/JSONEncoder))
+    //     function (otpional)
+    //
     // Returns:                      AWSKinesisStreams.Record object that can be 
     //                               written into the Amazon Kinesis stream using
     //                               AWSKinesisStreams.Producer putRecord/putRecords
