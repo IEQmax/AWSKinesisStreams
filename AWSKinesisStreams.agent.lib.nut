@@ -53,7 +53,7 @@ const _AWS_KINESIS_STREAMS_SERVICE = "kinesis";
 const _AWS_KINESIS_STREAMS_TARGET_PREFIX = "Kinesis_20131202";
 
 class AWSKinesisStreams {
-    static VERSION = "1.0.0";
+    static VERSION = "1.1.0";
 
     // Enables/disables the library debug output (including errors logging).
     // Disabled by default.
@@ -717,6 +717,7 @@ class AWSKinesisStreams.Record {
     _error = null;
     _explicitHashKey = null;
     _prevSequenceNumber = null;
+    _encoder = null;
 
     // Creates and returns AWSKinesisStreams.Record object that can be written into an
     // Amazon Kinesis stream using AWSKinesisStreams.Producer methods.
@@ -733,15 +734,19 @@ class AWSKinesisStreams.Record {
     //   prevSequenceNumber :        See http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering
     //     string (optional)
     //
+    //   encoder :                   a custom JSON encoder function for encoding the provided data (e.g. [JSONEncoder.encode](https://github.com/electricimp/JSONEncoder))
+    //     function (otpional)
+    //
     // Returns:                      AWSKinesisStreams.Record object that can be 
     //                               written into the Amazon Kinesis stream using
     //                               AWSKinesisStreams.Producer putRecord/putRecords
     //                               methods.
-    constructor(data, partitionKey, explicitHashKey = null, prevSequenceNumber = null) {
+    constructor(data, partitionKey, explicitHashKey = null, prevSequenceNumber = null, encoder = null) {
         this.data = data;
         this.partitionKey = partitionKey;
         _explicitHashKey = explicitHashKey;
         _prevSequenceNumber = prevSequenceNumber;
+        _encoder = encoder == null ? http.jsonencode.bindenv(http) : encoder;
     }
 
     // -------------------- PRIVATE METHODS -------------------- //
@@ -750,7 +755,7 @@ class AWSKinesisStreams.Record {
         _error = AWSKinesisStreams._utils._validateNonEmpty(partitionKey, "partitionKey");
         if (!_error) {
             local result = {
-                "Data" : http.base64encode(typeof data == "blob" ? data.tostring() : http.jsonencode(data)),
+                "Data" : http.base64encode(typeof data == "blob" ? data.tostring() : _encoder(data)),
                 "PartitionKey" : partitionKey,
             };
             if (_explicitHashKey) {

@@ -29,11 +29,13 @@ The tests for AWSKinesisStreams library require pre-setup described below.
 - Click **Policies** in the left menu.
 - Click **Create policy**.
 - Click **Select** next to **Policy Generator**.
-- Choose **Amazon Kinesis** as the **AWS service**.
-- Choose **All Actions** in the **Actions** field.
-- Enter your **Stream ARN** in the **Amazon Resource Name (ARN)** field.
-- Click **Add Statement**.
-- Click **Next Step**.
+- Choose **Kinesis** as the **Service**.
+- Choose **All Kinesis Actions** in the **Actions** field.
+- Click **Resources**.
+- Click **Add ARN to restrict access**.
+- Enter your **Stream ARN** in the **Specify ARN for stream** field.
+- Click **Add**.
+- Click **Review policy**.
 - Change **Policy Name** to `imptestStreamPolicy`.
 - Click **Create Policy**.  
 - Click **Users** in the left menu.

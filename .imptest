@@ -1,7 +1,7 @@
 {
-    "modelId": "bNA7KXCkI9jB" /* sender */,
+    "modelId": "Xj-yNZibO5M-" /* M */,
     "devices": [
-        "234776801163a9ee" /* 234776801163a9ee */
+        "500098f1706fd382" /* M */
     ],
     "agentFile": "AWSKinesisStreams.agent.lib.nut",
     "deviceFile": false,

@@ -13,7 +13,7 @@ The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/ele
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 ```
 
 ## Library Usage ##
@@ -68,7 +68,7 @@ This class represents an AWS Kinesis Streams record: a combination of data attri
 | *timestamp* | Integer | The approximate time that the record was inserted into the stream. In number of seconds since Unix epoch (midnight, 1 Jan 1970) |
 | *encryptionType* | [AWS_KINESIS_STREAMS_ENCRYPTION_TYPE](#aws_kinesis_streams_encryption_type-enum) | The encryption type used on the record |
 
-### Constructor: AWSKinesisStreams.Record(*data, partitionKey[, explicitHashKey][, prevSequenceNumber]*) ###
+### Constructor: AWSKinesisStreams.Record(*data, partitionKey[, explicitHashKey][, prevSequenceNumber][, encoder]*) ###
 
 This method creates and returns an AWSKinesisStreams.Record object that can be written into an Amazon Kinesis stream using [AWSKinesisStreams.Producer](#awskinesisstreamsproducer-class) methods.
 
@@ -78,6 +78,7 @@ This method creates and returns an AWSKinesisStreams.Record object that can be w
 | *partitionKey* | String | Yes | Identifies which shard in the stream the data record is assigned to (see the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html#Streams-Type-Record-PartitionKey)) |
 | *explicitHashKey* | String | Optional | The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash (see the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-ExplicitHashKey)) |
 | *prevSequenceNumber* | String | Optional | See the [Kinesis Streams documentation](http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#Streams-PutRecord-request-SequenceNumberForOrdering) |
+| *encoder* | Function | Optional | A custom JSON encoder function for encoding the provided data (e.g. [JSONEncoder.encode](https://github.com/electricimp/JSONEncoder)) |
 
 ## AWS_KINESIS_STREAMS_ENCRYPTION_TYPE Enum ##
 
@@ -268,7 +269,26 @@ A type of Squirrel data which can be encoded/decoded into/from JSON, eg. table, 
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
+#require "JSONEncoder.class.nut:2.0.0"
+
+//This class can be used to hold numbers larger than Squirrel can natively support (i.e. anything larger than 32-bit)
+//and then be encoded as a number (rather than a string) when encoded with `JSONEncoder.encode`.
+class JSONLiteralString {
+  _string = null;
+
+  constructor (string) {
+    _string = string.tostring();
+  }
+
+  function _serializeRaw() {
+    return _string;
+  }
+
+  function toString() {
+    return _string;
+  }
+}
 
 // Substitute with real values
 const AWS_KINESIS_REGION = "<YOUR_AWS_REGION>";
@@ -292,7 +312,8 @@ producer.putRecord(AWSKinesisStreams.Record("Hello!", "partitionKey"), function 
 records <- [
     AWSKinesisStreams.Record("test", "partitionKey1"),
     AWSKinesisStreams.Record(12345, "partitionKey2"),
-    AWSKinesisStreams.Record({ "temperature" : 21, "humidity" : 60 }, "partitionKey3")
+    AWSKinesisStreams.Record({ "temperature" : 21, "humidity" : 60 }, "partitionKey3"),
+    AWSKinesisStreams.Record({ "a" : JSONLiteralString("123456789123456789") }, "partitionKey4", null, null, JSONEncoder.encode.bindenv(JSONEncoder)) //write record using custom encoder
 ];
 
 producer.putRecords(records, function (error, failedRecordCount, putResults) {
@@ -315,7 +336,7 @@ producer.putRecords(records, function (error, failedRecordCount, putResults) {
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSKinesisStreams.agent.lib.nut:1.0.0"
+#require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 
 // Substitute with real values
 const AWS_KINESIS_REGION = "<YOUR_AWS_REGION>";
