@@ -18,7 +18,7 @@ The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/ele
 
 ## Example ## 
 
-A complete, step-by-step recipe can be found in the [examples](./examples) folder.
+A complete, step-by-step recipe can be found in the [Examples](./Examples) folder.
 
 ## Library Usage ##
 
