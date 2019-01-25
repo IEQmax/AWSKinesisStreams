@@ -9,16 +9,16 @@ This version of the library supports the following functionality:
 
 The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) library.
 
-## Example ## 
-
-A complete, step-by-step recipe can be found in the [examples](./examples) folder.
-
 **To add this library to your project, add the following lines to the top of your agent code:**
 
 ```squirrel
 #require "AWSRequestV4.class.nut:1.0.2"
 #require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 ```
+
+## Example ## 
+
+A complete, step-by-step recipe can be found in the [examples](./examples) folder.
 
 ## Library Usage ##
 
