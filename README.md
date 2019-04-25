@@ -16,6 +16,10 @@ The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/ele
 #require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 ```
 
+## Example ## 
+
+A complete, step-by-step recipe can be found in the [Examples](./Examples) folder.
+
 ## Library Usage ##
 
 The library consists of two essentially independent parts for, respectively, [reading](#reading-data) and [writing](#writing-data) data. You can instantiate and use any of these parts in your agent code as required by your application.  The library includes some [common components](#common-components) which are used by the both of the main parts.
