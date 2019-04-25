@@ -16,6 +16,8 @@ The AWSKinesisStreams library utilizes the [AWSRequestV4](https://github.com/ele
 #require "AWSKinesisStreams.agent.lib.nut:1.1.0"
 ```
 
+![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:AWSKinesisStreams_BuildAndTest)/statusIcon)
+
 ## Example ## 
 
 A complete, step-by-step recipe can be found in the [Examples](./Examples) folder.
