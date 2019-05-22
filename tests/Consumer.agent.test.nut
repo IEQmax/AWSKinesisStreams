@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-2019 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -36,11 +36,11 @@ const RECEIVE_DATA_PERIOD_SEC = 2.0;
 class ConsumerTestCase extends ImpTestCase {
     _awsProducer = null;
     _awsConsumer = null;
+    _awsBlobConsumer = null;
     _recordsCount = null;
     _recordsReceived = null;
 
     _counter = null;
-    _getShardRecordsCounter = null;
     _counterStart = null;
     _shardIds = null;
 
@@ -55,6 +55,12 @@ class ConsumerTestCase extends ImpTestCase {
             AWS_KINESIS_ACCESS_KEY_ID,
             AWS_KINESIS_SECRET_ACCESS_KEY,
             AWS_KINESIS_STREAM_NAME);
+        _awsBlobConsumer = AWSKinesisStreams.Consumer(
+            AWS_KINESIS_REGION,
+            AWS_KINESIS_ACCESS_KEY_ID,
+            AWS_KINESIS_SECRET_ACCESS_KEY,
+            AWS_KINESIS_STREAM_NAME,
+            true);
 
         _counter = time();
 
@@ -62,16 +68,10 @@ class ConsumerTestCase extends ImpTestCase {
     }
 
     function testGetBlobRecordsLatest() {
-        local awsBlobConsumer = AWSKinesisStreams.Consumer(
-            AWS_KINESIS_REGION,
-            AWS_KINESIS_ACCESS_KEY_ID,
-            AWS_KINESIS_SECRET_ACCESS_KEY,
-            AWS_KINESIS_STREAM_NAME,
-            true);
         local shardIterators = {};
         return Promise.all(_shardIds.map(function (shardId) {
                 return _initShardIterator(
-                    awsBlobConsumer, shardIterators, shardId, AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.LATEST);
+                    _awsBlobConsumer, shardIterators, shardId, AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.LATEST);
             }.bindenv(this))).
         then(function (value) {
                 _recordsCount = 0;
@@ -79,7 +79,7 @@ class ConsumerTestCase extends ImpTestCase {
                 return _putRecordsToAllShards({});
             }.bindenv(this)).
         then(function (value) {
-                return _getRecords(awsBlobConsumer, true, shardIterators, 2);
+                return _getRecords(_awsBlobConsumer, true, shardIterators, 2);
             }.bindenv(this)).
         fail(function(reason) {
                 return Promise.reject(reason);
@@ -172,11 +172,11 @@ class ConsumerTestCase extends ImpTestCase {
         return _putRecord(_getRecordData(false, "testPartitionKey")).
         then(function(value) {
                 return _initShardIterator(
-                    _awsConsumer, shardIterators, value.shardId, 
+                    _awsBlobConsumer, shardIterators, value.shardId, 
                     AWS_KINESIS_STREAMS_SHARD_ITERATOR_TYPE.TRIM_HORIZON);
             }.bindenv(this)).
         then(function (value) {
-               return _getRecords(_awsConsumer, false, shardIterators, 10);
+               return _getRecords(_awsBlobConsumer, true, shardIterators, 10000);
             }.bindenv(this)).
         fail(function(reason) {
                 return Promise.reject(reason);
@@ -230,20 +230,28 @@ class ConsumerTestCase extends ImpTestCase {
 
     function _getRecords(awsConsumer, isBlob, shardIterators, limit) {
         _recordsReceived = 0;
-        _getShardRecordsCounter = 0;
-        return Promise(function (resolve, reject) {
-            foreach (shardIter in shardIterators) {
-                _getShardRecords(awsConsumer, isBlob, { "shardIterator" : shardIter, "limit" : limit }, resolve, reject);
-            }
-        }.bindenv(this));
+        local shardIds = [];
+        foreach (shardId, shardIter in shardIterators) {
+            shardIds.push(shardId);
+        }
+        return Promise.all(
+            shardIds.map(function (shardId) {
+                return Promise(function (resolve, reject) {
+                    _getShardRecords(awsConsumer, isBlob, { "shardIterator" : shardIterators[shardId], "limit" : limit }, resolve, reject);
+                }.bindenv(this));
+            }.bindenv(this))).
+        then(function (value) {
+                if (_recordsReceived < _recordsCount) {
+                    return Promise.reject("Records receiving failed");
+                }
+            }.bindenv(this)).
+        fail(function(reason) {
+                return Promise.reject(reason);
+            }.bindenv(this));
     }
 
     function _getShardRecords(awsConsumer, isBlob, options, resolve, reject) {
         imp.wakeup(RECEIVE_DATA_PERIOD_SEC, function () {
-            _getShardRecordsCounter++;
-            if (_getShardRecordsCounter > 2 * _recordsCount) {
-                return reject("Records receiving failed");
-            }
             awsConsumer.getRecords(
                 options,
                 function (error, records, millisBehindLatest, nextOptions) {
@@ -272,6 +280,8 @@ class ConsumerTestCase extends ImpTestCase {
                         }
                         if (millisBehindLatest > 0 && nextOptions) {
                             _getShardRecords(awsConsumer, isBlob, nextOptions, resolve, reject);
+                        } else {
+                            return resolve("");
                         }
                     }
                 }.bindenv(this));
