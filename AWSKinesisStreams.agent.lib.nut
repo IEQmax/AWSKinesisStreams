@@ -42,6 +42,14 @@ enum AWS_KINESIS_STREAMS_ERROR {
     UNEXPECTED_RESPONSE
 };
 
+// The encryption type used on a record. See http://docs.aws.amazon.com/kinesis/latest/
+enum AWS_KINESIS_STREAMS_ENCRYPTION_TYPE {
+    // record is not encrypted
+    NONE,
+    // record is encrypted on server side using a customer-managed KMS key
+    KMS
+};
+
 // Error details produced by the library
 const AWS_KINESIS_STREAMS_REQUEST_FAILED = "AWS Kinesis request failed with status code";
 const AWS_KINESIS_STREAMS_NON_EMPTY_ARG = "Non empty argument required";
@@ -683,14 +691,6 @@ class AWSKinesisStreams.Consumer {
         }
     }
 }
-
-// The encryption type used on a record. See http://docs.aws.amazon.com/kinesis/latest/
-enum AWS_KINESIS_STREAMS_ENCRYPTION_TYPE {
-    // record is not encrypted
-    NONE,
-    // record is encrypted on server side using a customer-managed KMS key
-    KMS
-};
 
 // Represents an Amazon Kinesis Streams record: a combination of data attributes.
 class AWSKinesisStreams.Record {
