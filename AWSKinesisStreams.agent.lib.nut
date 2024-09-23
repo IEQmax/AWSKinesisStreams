@@ -28,6 +28,14 @@
 // - writing data records into an Amazon Kinesis stream
 // - getting data records from an Amazon Kinesis stream's shard
 
+// The encryption type used on a record. See http://docs.aws.amazon.com/kinesis/latest/
+enum AWS_KINESIS_STREAMS_ENCRYPTION_TYPE {
+    // record is not encrypted
+    NONE,
+    // record is encrypted on server side using a customer-managed KMS key
+    KMS
+};
+
 // AWSKinesisStreams library operation error types
 enum AWS_KINESIS_STREAMS_ERROR {
     // the library detects an error, e.g. the library is wrongly initialized or
@@ -683,14 +691,6 @@ class AWSKinesisStreams.Consumer {
         }
     }
 }
-
-// The encryption type used on a record. See http://docs.aws.amazon.com/kinesis/latest/
-enum AWS_KINESIS_STREAMS_ENCRYPTION_TYPE {
-    // record is not encrypted
-    NONE,
-    // record is encrypted on server side using a customer-managed KMS key
-    KMS
-};
 
 // Represents an Amazon Kinesis Streams record: a combination of data attributes.
 class AWSKinesisStreams.Record {
